@@ -1,6 +1,6 @@
 import pytest
-import poker_functions
-import simulation as s
+import holdem_sim.poker_functions
+import holdem_sim.simulation as s
 
 @pytest.fixture
 def six_card_straight_board():
@@ -93,7 +93,7 @@ def test_player_create():
 
 def test_player_cards():
     player = s.Player(1, ['Ac', 'Ad'])
-    assert type(player.cards[0]) == poker_functions.Card
+    assert type(player.cards[0]) == holdem_sim.poker_functions.Card
 
 
 def test_player_no_cards():
@@ -120,9 +120,9 @@ def test_score_game_single_winner():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('3ok', 8, kicker=10)
-    player1.hand = poker_functions.Hand('hc', 13, 10, 9)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('3ok', 8, kicker=10)
+    player1.hand = holdem_sim.poker_functions.Hand('hc', 13, 10, 9)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -137,9 +137,9 @@ def test_score_game_high_winner():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('flush', 13)
-    player1.hand = poker_functions.Hand('flush', 9)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('flush', 13)
+    player1.hand = holdem_sim.poker_functions.Hand('flush', 9)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -154,9 +154,9 @@ def test_score_game_high_chop():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('flush', 13)
-    player1.hand = poker_functions.Hand('flush', 13)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('flush', 13)
+    player1.hand = holdem_sim.poker_functions.Hand('flush', 13)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -171,9 +171,9 @@ def test_score_game_boat_high_plays():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('boat', 13, 5)
-    player1.hand = poker_functions.Hand('boat', 9, 6)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('boat', 13, 5)
+    player1.hand = holdem_sim.poker_functions.Hand('boat', 9, 6)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -188,9 +188,9 @@ def test_score_game_boat_low_plays():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('boat', 13, 5)
-    player1.hand = poker_functions.Hand('boat', 13, 6)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('boat', 13, 5)
+    player1.hand = holdem_sim.poker_functions.Hand('boat', 13, 6)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -206,9 +206,9 @@ def test_score_game_hi_lo_kick_clear_hi_winner():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('boat', 13, 5)
-    player1.hand = poker_functions.Hand('boat', 10, 6)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('boat', 13, 5)
+    player1.hand = holdem_sim.poker_functions.Hand('boat', 10, 6)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -223,9 +223,9 @@ def test_score_game_hi_lo_kick_lo_winner():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('3ok', 13, 5, 3)
-    player1.hand = poker_functions.Hand('3ok', 10, 6, 5)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('3ok', 13, 5, 3)
+    player1.hand = holdem_sim.poker_functions.Hand('3ok', 10, 6, 5)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -240,9 +240,9 @@ def test_score_game_hi_lo_kick_kicker_winner():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('3ok', 13, 5, 3)
-    player1.hand = poker_functions.Hand('3ok', 13, 5, 4)
-    player2.hand = poker_functions.Hand('pair', 8, kicker=12)
+    player0.hand = holdem_sim.poker_functions.Hand('3ok', 13, 5, 3)
+    player1.hand = holdem_sim.poker_functions.Hand('3ok', 13, 5, 4)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, kicker=12)
 
     contestants = [player0, player1, player2]
 
@@ -258,9 +258,9 @@ def quad_showdown():
     player1 = s.Player(1)
     player2 = s.Player(2)
 
-    player0.hand = poker_functions.Hand('4ok', 5, low_value=3)
-    player1.hand = poker_functions.Hand('4ok', 5, low_value=4)
-    player2.hand = poker_functions.Hand('pair', 8, low_value=12, kicker=9)
+    player0.hand = holdem_sim.poker_functions.Hand('4ok', 5, low_value=3)
+    player1.hand = holdem_sim.poker_functions.Hand('4ok', 5, low_value=4)
+    player2.hand = holdem_sim.poker_functions.Hand('pair', 8, low_value=12, kicker=9)
 
     contestants = [player0, player1, player2]
     return contestants

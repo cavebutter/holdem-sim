@@ -1,6 +1,5 @@
 import pytest
-import poker_functions
-
+import holdem_sim.poker_functions as p
 
 # valid card string
 card_str1 = 'As'
@@ -440,7 +439,7 @@ def test_straight_flush(straight_flush):
 
 def test_hand_init():
     my_hand = new_hand
-    assert type(my_hand) == poker_functions.Hand
+    assert type(my_hand) == p.Hand
 
 def test_hand_value():
     my_hand = new_hand

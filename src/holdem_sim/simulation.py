@@ -1,4 +1,4 @@
-import poker_functions as p
+import holdem_sim.poker_functions as p
 from fractions import Fraction
 from collections import Counter
 
