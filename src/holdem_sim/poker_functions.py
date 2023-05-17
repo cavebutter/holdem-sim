@@ -24,7 +24,24 @@ HAND_REGISTRY = []
 
 @dataclass
 class Card:
+    """
+    A playing card.
+
+    Cards are instantiated with a two-character string indicating rank and suit of the card.
+    """
     def __init__(self, card_str):
+        """
+        Initializing a Card.
+
+        Rank is the first character in passed string. (2-9, T, J, Q, K, A)
+        Suit is the second character in passed string (c, d, h. s)
+        Value is derived from the value corresponding to rank key in rank_value dict
+
+        Parameters
+        -----------
+        card_str : str
+            Two character string - Rank suit
+        """
         self.rank = str(card_str[0])
         self.suit = card_str[1]
         self.name = self.rank + self.suit
@@ -48,11 +65,21 @@ class Card:
 @dataclass()
 class Hand:
     def __init__(self, type, high_value, low_value = 0, kicker=0):
-        """Type = name of hand (e.g. Pair)
-        value = value of the hand (i.e. Straight Flush is the most valuable)
-        high_value = value.  either the high card in straight or flush, the set in full house, the top pair in 2pair, etc
-        low_value = the lower pair in 2 pair or the pair in a full house
-        kicker = value of the kicker in the hand.  Can be null
+        """
+        A five-card poker hand.
+        value refers to the value of the hand itself and is derived from the value associated with the type key in hand_values dict
+        high_rank, low_rank, kicker_rank are derived from the values of the high_value, low_value, and kicker keys in the value_rank dict.
+
+        Parameters
+        ----------
+        type : str
+            name of hand (e.g. pair)
+        high_value : int
+            the value of high card in straight or flush, the set in full house, the top pair in 2pair, etc
+        low_value : int
+            default = 0. the value of the next highest card in the hand.  The kicker.
+        kicker : int
+            default = 0. the value of the next highest card in the hand.  Yes, this is confusing.
         """
         if kicker in card_values:
             kicker_rank = value_rank[kicker]
@@ -94,6 +121,12 @@ class Hand:
 
 
 class Deck(list):
+    """
+    A deck of Cards.
+
+    Instantiated by the function generate_deck().  Behaves like a list with a few additional methods specific to
+    playing cards.
+    """
     def __init__(self, deck):
         self.deck = deck
 
@@ -108,14 +141,34 @@ class Deck(list):
         return len(self.deck)
 
     def deal_card(self):
-        """Select a random card from the deck.  Return the card and the deck with the card removed"""
+        """Select a random card from the deck.  Return the card and the deck with the card removed
+
+        Returns
+        -------
+        card : Card
+        self : Deck
+
+        Examples:
+        ---------
+        card, deck = deck.deal_card()
+        """
         i = random.randint(0, len(self)-1)
         card = self[i]
         self.deck.pop(i)
         return card, self
 
     def update_deck(self, card):
-        """Remove card from deck"""
+        """
+        Remove passed card from deck
+
+        Parameters
+        ----------
+        card : Card
+
+        Returns
+        -------
+        self : Deck
+        """
         deck_names = [card.name for card in self.deck]
         if isinstance(card, Card):
             card_name = card.name
@@ -132,9 +185,30 @@ def register(func):
     HAND_REGISTRY.append(func)
     return func
 
+
 def make_card(input_list):
-    """Input_list is either a list of Card objects or string Objects.  If Cards, return the cards.
-      If string, convert to Card and return"""
+    """
+    Input_list is either a list of Card objects or string Objects.  If Cards, return the cards.
+    If string, convert to Card and return
+
+    Parameters
+    -----------
+    input_list : list
+        Can be either a list of card strings or Card objects.  If strings, they are converted to Cards and returned.
+        If Cards, input_list is returned unchanged.
+
+    Returns
+    --------
+    card_list : list
+        list of newly created Card objects
+    or
+    input_list : list
+       unchanged list of Card objects
+
+    Examples
+    --------
+    list_of_Card_objects = make_card(list_of_strings)
+    """
     if len(input_list) == 0:
         return input_list
     elif isinstance(input_list[0], Card):
@@ -145,6 +219,19 @@ def make_card(input_list):
 
 
 def generate_deck():
+    """
+    Create a full deck of cards.
+
+    Returns
+    -------
+    deck : Deck
+        list-like object of 52 Card objects
+
+    Examples
+    --------
+    mydeck = generate_deck()
+
+    """
     deck = []
     for rank in ranks:
         for suit in suits:
@@ -157,7 +244,22 @@ def generate_deck():
 
 #####     POKER     #####
 def find_multiple(hand, board, n=2):
-    """Is there a pair, three of a kind, four of a kind/?"""
+    """
+    Is there a pair, three of a kind, four of a kind?
+
+    Checks a passed hand, board, and type of multiple (e.g. pair, three of a kind, four of a kind) for the existence
+    of that type of multiple.  If that type of multiple does not exist, False is returned.  If it does, a Hand object
+    is returned with high_value, low_value, and kicker values.
+
+    Parameters
+    -----------
+    hand : list
+        list of either Cards or card strings
+    board : list
+        list of either Cards or card strings
+    n : int
+        type of multiple (2 for pair, 3 for three of a kind, 4 for four of a kind)
+    """
     hand = make_card(hand)
     board = make_card(board)
     multiple = False
@@ -193,7 +295,24 @@ def find_multiple(hand, board, n=2):
 
 
 def evaluate_straight(values):
-    """Evaluates a list of card values to determine whether there are 5 consecutive values"""
+    """
+    Evaluates a list of card values to determine whether there are 5 consecutive values.
+
+    List of integers are evaluated from high to low to see if there are 5 consecutive values.  Low straights are
+    accounted for by adding 14 at the low end of the list.  If 5 consecutive values are present, True is returned along
+    with a list of 5 consecutive values.  Else, False is returned along with an empty list.
+
+    A component of find_straight().  Not meant for independent use.
+
+    Parameters
+    ----------
+    values : list
+
+    Returns:
+    --------
+    straight : bool
+    straight_hand_values : list
+    """
     straight = False
     count = 0
     straight_hand_values = []
@@ -214,7 +333,19 @@ def evaluate_straight(values):
 
 @register
 def find_straight_flush(hand, board):
-    """Find a straight flush in a given hand/board combination"""
+    """
+    Find a straight flush in a given hand/board combination.
+
+    Hand and board are first evaluated to find a flush.  If flush, then the flush-suited cards are evaluated for
+    a straight.  If straight, then return a straight_flush Hand.  If either are false, then False is returned.
+
+    Parameters
+    -----------
+    hand : list
+        list of Cards or card strings
+    board : list
+        list of Cards or card strings
+    """
     hand = make_card(hand)
     board = make_card(board)
     straight_flush = False
@@ -240,13 +371,39 @@ def find_straight_flush(hand, board):
 
 @register
 def find_quads(hand, board):
+    """
+    Calls find_multiple() to find four of a kind.
+
+    Parameters
+    -----------
+    hand : list
+    board : list
+
+    Returns
+    -------
+    bool | Hand
+
+    """
     quads = find_multiple(hand, board, n=4)
     return quads
 
 
 @register
 def find_full_house(hand, board):
-    """Is there a full house?"""
+    """
+    Is there a full house?
+
+    Hand and board are first evaluated for 3 of a kind.  If three of a kind is present, the remaining cards are
+    evaluated for a pair.  If both three of a kind and a pair are present, then a 'boat' Hand is returned.  Else,
+    False is returned.
+
+    Parameters
+    ----------
+    hand : list
+        list of Cards or strings
+    board : list
+        list of Cards or strings
+    """
     hand = make_card(hand)
     board = make_card(board)
     boat = False
@@ -270,7 +427,19 @@ def find_full_house(hand, board):
 
 @register
 def find_flush(hand, board):
-    """Does any combination of 5 cards in hand or on board amount to 5 of the same suit"""
+    """
+    Does any combination of 5 cards in hand or on board amount to 5 of the same suit
+
+    Count the suits in the passed cards.  If the count of any suit equals 5, then a flush hand is returned.  If not,
+    False is returned.
+
+    Parameters
+    ----------
+    hand : list
+        list of Cards or strings
+    board : list
+        list of Cards or strings
+    """
     hand = make_card(hand)
     board = make_card(board)
     total_hand = hand + board
@@ -291,7 +460,19 @@ def find_flush(hand, board):
 
 @register
 def find_straight(hand, board):
-    """Find a straight in a given hand/board combination"""
+    """
+    Find a straight in a given hand/board combination
+
+    Passed hand and board are evaluated, high to low, to determine whether there are 5 consecutive cards.  If there
+    are 5 consecutive cards, a straight Hand is returned.  If not, False is returned.
+
+    Parameters
+    -----------
+    hand : list
+        list of Cards or strings
+    board : list
+        list of Cards or strings
+    """
     hand = make_card(hand)
     board = make_card(board)
     straight = False
@@ -320,13 +501,40 @@ def find_straight(hand, board):
 
 @register
 def find_trips(hand, board):
+    """
+    Calls find_multiple() to find three of a kind.
+
+    Parameters
+    -----------
+    hand : list
+    board : list
+
+    Returns
+    -------
+    bool | Hand
+
+    """
     trips = find_multiple(hand, board, n=3)
     return trips
 
 
 @register
 def find_two_pair(hand, board):
-    """Is there two-pair?"""
+    """
+    Is there two-pair?
+
+    Hand and board are evaluated to determine whether there is a pair present.  If so, the remaining cards are
+    evaluated to determine if there is another pair.  If so, a '2pair' Hand is returned.  If not, False is returned.
+
+    Parameters
+    -----------
+    hand : list
+    board : list
+
+    Returns
+    -------
+    bool | Hand
+    """
     hand = make_card(hand)
     board = make_card(board)
     two_pair = False
@@ -350,12 +558,40 @@ def find_two_pair(hand, board):
 
 @register
 def find_pair(hand, board):
+    """
+    Calls find_multiple() to find a pair.
+
+    Parameters
+    -----------
+    hand : list
+    board : list
+
+    Returns
+    -------
+    bool | Hand
+
+    """
     pair = find_multiple(hand, board, n=2)
     return pair
 
 
 @register
 def find_high_card(hand, board):
+    """
+    Create a 'high card' hand.
+
+    Passed hand and board evaluated and a high card hand is returned with the highest value card as high_value,
+    second as low, third as kicker.
+
+    Parameters
+    -----------
+    hand : list
+    board : list
+
+    Returns
+    -------
+    high_card_hand : Hand
+    """
     hand = make_card(hand)
     board = make_card(board)
     total_hand = hand + board
