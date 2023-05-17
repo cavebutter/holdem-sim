@@ -64,12 +64,14 @@ class Card:
 
 @dataclass()
 class Hand:
+    """
+    A five-card poker hand.
+    value refers to the value of the hand itself and is derived from the value associated with the type key in HAND_VALUES dict
+    high_rank, low_rank, kicker_rank are derived from the values of the high_value, low_value, and kicker keys in the VALUE_RANK dict.
+
+    """
     def __init__(self, type, high_value, low_value = 0, kicker=0):
         """
-        A five-card poker hand.
-        value refers to the value of the hand itself and is derived from the value associated with the type key in HAND_VALUES dict
-        high_rank, low_rank, kicker_rank are derived from the values of the high_value, low_value, and kicker keys in the VALUE_RANK dict.
-
         Parameters
         ----------
         type : str
@@ -204,10 +206,6 @@ def make_card(input_list):
     or
     input_list : list
        unchanged list of Card objects
-
-    Examples
-    --------
-    list_of_Card_objects = make_card(list_of_strings)
     """
     if len(input_list) == 0:
         return input_list
@@ -226,11 +224,6 @@ def generate_deck():
     -------
     deck : Deck
         list-like object of 52 Card objects
-
-    Examples
-    --------
-    mydeck = generate_deck()
-
     """
     deck = []
     for rank in RANKS:
@@ -259,6 +252,10 @@ def find_multiple(hand, board, n=2):
         list of either Cards or card strings
     n : int
         type of multiple (2 for pair, 3 for three of a kind, 4 for four of a kind)
+
+    Returns
+    -------
+    bool or Hand
     """
     hand = make_card(hand)
     board = make_card(board)
@@ -310,8 +307,8 @@ def evaluate_straight(values):
 
     Returns:
     --------
-    straight : bool
-    straight_hand_values : list
+    tuple[straight : bool
+    straight_hand_values : list]
     """
     straight = False
     count = 0
@@ -345,6 +342,10 @@ def find_straight_flush(hand, board):
         list of Cards or card strings
     board : list
         list of Cards or card strings
+
+    Returns
+    -------
+    bool | Hand
     """
     hand = make_card(hand)
     board = make_card(board)
@@ -403,6 +404,10 @@ def find_full_house(hand, board):
         list of Cards or strings
     board : list
         list of Cards or strings
+
+    Returns
+    -------
+    bool | Hand
     """
     hand = make_card(hand)
     board = make_card(board)
@@ -439,6 +444,10 @@ def find_flush(hand, board):
         list of Cards or strings
     board : list
         list of Cards or strings
+
+    Returns
+    -------
+    bool | Hand
     """
     hand = make_card(hand)
     board = make_card(board)
@@ -472,6 +481,10 @@ def find_straight(hand, board):
         list of Cards or strings
     board : list
         list of Cards or strings
+
+    Returns
+    --------
+    bool | Hand
     """
     hand = make_card(hand)
     board = make_card(board)

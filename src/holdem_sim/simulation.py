@@ -95,8 +95,8 @@ def convert_and_update(deck, cards):
 
     Returns
     --------
-    deck : Deck
-    cards : list
+    tuple[deck : Deck
+    cards : list]
     """
     if len(cards) == 0:
         return deck, cards
