@@ -2,12 +2,12 @@ import random
 from collections import Counter
 from dataclasses import dataclass
 
-card_values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
-rank_value = dict(zip(ranks, card_values))
-value_rank = dict(zip(card_values, ranks))
-suits = ['c', 'd', 'h', 's']
-hand_values = {'hc': 1,
+CARD_VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
+RANK_VALUE = dict(zip(RANKS, CARD_VALUES))
+VALUE_RANK = dict(zip(CARD_VALUES, RANKS))
+SUITS = ['c', 'd', 'h', 's']
+HAND_VALUES = {'hc': 1,
                'pair': 2,
                '2pair': 3,
                '3ok': 4,
@@ -35,7 +35,7 @@ class Card:
 
         Rank is the first character in passed string. (2-9, T, J, Q, K, A)
         Suit is the second character in passed string (c, d, h. s)
-        Value is derived from the value corresponding to rank key in rank_value dict
+        Value is derived from the value corresponding to rank key in RANK_VALUE dict
 
         Parameters
         -----------
@@ -45,7 +45,7 @@ class Card:
         self.rank = str(card_str[0])
         self.suit = card_str[1]
         self.name = self.rank + self.suit
-        self.value = rank_value[self.rank]
+        self.value = RANK_VALUE[self.rank]
 
     def __str__(self):
         return self.name
@@ -67,8 +67,8 @@ class Hand:
     def __init__(self, type, high_value, low_value = 0, kicker=0):
         """
         A five-card poker hand.
-        value refers to the value of the hand itself and is derived from the value associated with the type key in hand_values dict
-        high_rank, low_rank, kicker_rank are derived from the values of the high_value, low_value, and kicker keys in the value_rank dict.
+        value refers to the value of the hand itself and is derived from the value associated with the type key in HAND_VALUES dict
+        high_rank, low_rank, kicker_rank are derived from the values of the high_value, low_value, and kicker keys in the VALUE_RANK dict.
 
         Parameters
         ----------
@@ -81,20 +81,20 @@ class Hand:
         kicker : int
             default = 0. the value of the next highest card in the hand.  Yes, this is confusing.
         """
-        if kicker in card_values:
-            kicker_rank = value_rank[kicker]
+        if kicker in CARD_VALUES:
+            kicker_rank = VALUE_RANK[kicker]
         else:
             kicker_rank = 0
-        if low_value in card_values:
-            low_rank = value_rank[low_value]
+        if low_value in CARD_VALUES:
+            low_rank = VALUE_RANK[low_value]
         else:
             low_rank = 0
         self.type = type
-        self.hand_value = hand_values[type]
+        self.hand_value = HAND_VALUES[type]
         self.kicker = kicker
         self.kicker_rank = kicker_rank
         self.high_value = high_value
-        self.high_rank = value_rank[self.high_value]
+        self.high_rank = VALUE_RANK[self.high_value]
         self.low_value = low_value
         self.low_rank = low_rank
 
@@ -233,8 +233,8 @@ def generate_deck():
 
     """
     deck = []
-    for rank in ranks:
-        for suit in suits:
+    for rank in RANKS:
+        for suit in SUITS:
             card_str = rank + suit
             _card = Card(card_str)
             deck.append(_card)
@@ -430,7 +430,7 @@ def find_flush(hand, board):
     """
     Does any combination of 5 cards in hand or on board amount to 5 of the same suit
 
-    Count the suits in the passed cards.  If the count of any suit equals 5, then a flush hand is returned.  If not,
+    Count the SUITS in the passed cards.  If the count of any suit equals 5, then a flush hand is returned.  If not,
     False is returned.
 
     Parameters

@@ -4,7 +4,21 @@ from collections import Counter
 
 
 class Player:
+    """
+    Class meant to designate a participant in a simulated game. Number acts as the identifier for the player.
+    Hole cards can be associated with the player if passed.  If they are passed, then starting_cards is set to True.
+    If not passed, starting_cards is set to False.
+
+    Parameters
+    -----------
+    number : int
+    cards : list
+    """
     def __init__(self, number, cards=[]):
+        """Parameters
+        -----------
+        number: int
+        cards: list"""
         if len(cards) > 0:
             cards = p.make_card(cards)
         else:
@@ -18,7 +32,21 @@ class Player:
     def __str__(self):
         return "player_" + str(self.number)
 
+
 def dedupe(board):
+    """
+    Evaluate all the passed cards in the board to determine if any element is duplicated.
+
+    If any duplicates are found, True is returned.  Else False.
+
+    Parameters
+    ----------
+    board : list
+
+    Returns
+    -------
+    duplicate :  bool
+    """
     duplicate = False
     c = Counter(board)
     for card in board:
@@ -29,7 +57,20 @@ def dedupe(board):
 
 
 def validate_card(check):
-    """Detect invalid cards in a passed collection"""
+    """
+    Detect invalid cards in a passed collection.
+
+    Each element in the passed list is compared against a list of valid Card names in a Deck.  If all elements are
+    valid Card names, return True.  If not, return False.
+
+    Parameters
+    ----------
+    check : list
+
+    Returns
+    -------
+    valid : bool
+    """
     valid = True
     deck = p.generate_deck()
     valid_cards = [card.name for card in deck]
@@ -41,6 +82,22 @@ def validate_card(check):
 
 
 def convert_and_update(deck, cards):
+    """
+    Convert card strings to Card objects and remove them from Deck.
+
+    Deck object and card list are passed in.  If the card list is empty, then both parameters are returned unchanged.
+    If the card list is not empty, elements are converted to Cards and removed from the passed Deck.
+
+    Parameters
+    ----------
+    deck : Deck
+    cards : list
+
+    Returns
+    --------
+    deck : Deck
+    cards : list
+    """
     if len(cards) == 0:
         return deck, cards
     else:
@@ -49,8 +106,27 @@ def convert_and_update(deck, cards):
             deck.update_deck(card)
         return deck, cards
 
+
 #####     SIMULATIONS     #####
 def evaluate_hand(hole_cards, flop=[], turn=[], river=[]):
+    """
+    Evaluate hole cards and board.  Return best hand as Hand object.
+
+    Hole cards, flop, turn, and river are evaluated.  If the combined number of cards is < 5, then a None is returned.
+    If > 5, then the cards are passed to each function in the HAND_REGISTRY from highest hand value to lowest.  The
+    highest hand is returned.
+
+    Parameters
+    ----------
+    hole_cards : list
+    flop : list
+    turn : list
+    river : list
+
+    Returns
+    --------
+   None | Hand
+    """
     board = flop + turn + river
     hand = None
     if len(hole_cards + board) < 5:
@@ -66,7 +142,20 @@ def evaluate_hand(hole_cards, flop=[], turn=[], river=[]):
 
 def score_game(contestants):
     #  TODO make this more elegant by functionizing repeated code.
-    """Application will determine the highest hand, including low and kicker for each player in player_list"""
+    """
+    Application will credit a win to the player with the highest hand.
+
+    The hand of every player in contestants will be scored.  If more than one player has the highest valued hand,
+    then high, low, and kicker are compared to determine the actual winner.  If all are equal, then no win is awarded.
+
+    Parameters
+    ----------
+    contestants : list
+
+    Returns
+    -------
+    contestants : list
+    """
     high = ['flush', 'straight', 'straight_flush']
     kick = ['4ok']
     hi_lo = ['boat']
@@ -129,6 +218,23 @@ def score_game(contestants):
 
 
 def simulation_one_player(hole, flop=[], turn=[], river=[], sims=100000):
+    """
+    Simulate a holdem hand 100000 times and return the frequency of each ending hand.
+
+    Hole cards and whatever known cards from flop, turn and river are passed.  Random cards are dealt to bring card
+    total to 7 and then the hand is evaluated.  Repeat for each sim.
+
+    Parameters
+    ----------
+    hole : list
+    flop : list
+    turn : list
+    river: list
+    sims : int
+
+    Return:
+    tuple [int, int, int, int, int, int, int, int, int, int]
+    """
     full_board = 7 # number of cards required to run sim
     passed_cards = len(hole) + len(flop) + len(turn) + len(river)
     passed_flop = [item for item in flop]
@@ -180,6 +286,27 @@ def simulation_one_player(hole, flop=[], turn=[], river=[], sims=100000):
 
 def simulation_multiplayer(hole_one, hole_two=[], hole_three=[], hole_four=[], hole_five=[], hole_six=[],
                            flop = [], turn = [], river = [], opponents=2, sims=10000):
+    """
+    Simulate multiplayer poker.  Returns list of Player objects with their number of wins.
+
+    Hero's (hole_one) and other players' hands (hole_two, hole_three, etc) are evaluated and scored in 10000 (default)
+    simulations.  Hole cards for all players except Hero are optional.  Number of players is passed as opponents.
+
+    Parameters
+    ----------
+    hole_one : list
+    hole_two : list
+    hole_three : list
+    hole_four : list
+    hole_five : list
+    hole_six : list
+    opponents : int
+    sims : int
+
+    Returns
+    -------
+    contestants : list
+    """
     contestant_hands = [hole_one, hole_two, hole_three, hole_four, hole_five, hole_six]
     contestants = []
     flop = p.make_card(flop)
@@ -226,16 +353,35 @@ def simulation_multiplayer(hole_one, hole_two=[], hole_three=[], hole_four=[], h
     return contestants
 
 
-
 #  TODO for single and mult: find and return most likely hand.  Return number of outs and odds.
-
 #####     MATH     #####
 def percent(hits, sims):
+    """
+    Return the percent of hits / sims
+
+    Parameters
+    ----------
+    hits : int
+    sims : int
+
+    Returns
+    -------
+    percent = float
+    """
     percent = round((hits / sims) * 100,0)
     return percent
 
 def ratio(hits, sims):
-    """Return a ratio (e.g. 3:5) for two input numbers"""
+    """Return a ratio (e.g. 3:5) for two input numbers
+    Parameters
+    -----------
+    hits : int
+    sims : int
+
+    Returns
+    -------
+    fraction : float
+    """
     percent = round((hits / sims),2)
     fraction = str(Fraction(percent).limit_denominator())
     fraction = fraction.replace('/', ':')
@@ -258,4 +404,4 @@ outs = {'1':('46:1','45:1',"22:1"),
         }
 
 
-rank_value = p.rank_value
+rank_value = p.RANK_VALUE
