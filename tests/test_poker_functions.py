@@ -1,5 +1,5 @@
 import pytest
-import holdem_sim.poker_functions as p
+import src.holdem_sim.poker_functions as p
 
 # valid card string
 card_str1 = 'As'

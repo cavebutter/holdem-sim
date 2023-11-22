@@ -5,7 +5,7 @@
 ##############  IMPORTANT  ##############
 
 import sys
-import src.holdem_sim.simulation as s
+import holdem_sim.simulation as s
 import argparse
 from prettytable import PrettyTable
 

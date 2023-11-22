@@ -1,4 +1,4 @@
-import src.holdem_sim.simulation as s
+import holdem_sim.simulation as s
 from prettytable import PrettyTable
 
 
