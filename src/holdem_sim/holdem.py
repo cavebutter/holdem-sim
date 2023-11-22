@@ -1,7 +1,16 @@
+##############  IMPORTANT  ##############
+# This module is effectively depricated and will be removed in the future. #
+# Please use the 'sim_results.py' module instead. #
+# The command-line interface is no longer supported. #
+##############  IMPORTANT  ##############
+
 import sys
-import simulation as s
+import src.holdem_sim.simulation as s
 import argparse
 from prettytable import PrettyTable
+
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -34,19 +43,30 @@ if __name__ == '__main__':
 
     board = args.flop + args.turn + args.river
     #  Validate arguments
-    check = board + args.Hole_Cards + args.two + args.three + args.four + args.five + args.six + args.multiplayer
-    duplicate = s.dedupe(check)
-    if duplicate:
-        print("There is a duplicate card.  Please check the board and your hand and try again")
-        sys.exit()
-    valid = s.validate_card(check)
-    if not valid:
-        print("At least one of your cards is not valid.  Please try again.")
-        sys.exit()
-    board_str = ''
-    for card in board:
-        board_str += card + ' '
+    check = board + args.Hole_Cards
 
+    if args.Hole_Cards is not None:
+        duplicate = s.dedupe(check)
+        if duplicate:
+            print("There is a duplicate card.  Please check the board and your hand and try again")
+            sys.exit()
+        valid = s.validate_card(check)
+        if not valid:
+            print("At least one of your cards is not valid.  Please try again.")
+            sys.exit()
+        board_str = ''
+        for card in board:
+            board_str += card + ' '
+    # if len(multiplayer_check) > 0:
+    #     check = check + multiplayer_check
+    #     mp_duplicate = s.dedupe(check)
+    #     if mp_duplicate:
+    #         print("There is a duplicate card.  Please check the board and your hand and try again")
+    #         sys.exit()
+    #     mp_valid = s.validate_card(check)
+    #     if not mp_valid:
+    #         print("At least one of your cards is not valid.  Please try again.")
+    #         sys.exit()
     if len(args.Hole_Cards) > 0:
         sim = s.simulation_one_player(args.Hole_Cards, args.flop, args.turn, args.river)
         hc_pct = s.percent(sim[1], sim[0])
@@ -93,6 +113,24 @@ if __name__ == '__main__':
     #     print(x)
 
     elif len(args.multiplayer) > 0:
+        multiplayer_one = [args.two, args.three, args.four, args.five, args.six, args.multiplayer]
+        multiplayer_check = [argument for argument in multiplayer_one if len(argument) > 0]
+        arguments_to_pass = []
+        for card_list in multiplayer_check:
+            if len(card_list)>0:
+                for card in card_list:
+                    arguments_to_pass.append(card)
+        m_check = board + arguments_to_pass
+        duplicate = s.dedupe(m_check)
+        if duplicate:
+            print("There is a duplicate card.  Please check the board and your hand and try again")
+            sys.exit()
+        valid = s.validate_card(m_check)
+        if not valid:
+            print("At least one of your cards is not valid.  Please try again.")
+            sys.exit()
+
+
         game = s.simulation_multiplayer(args.multiplayer, hole_two=args.two, hole_three=args.three, hole_four=args.four,
                                         hole_five=args.five, hole_six=args.six, flop=args.flop, turn=args.turn,
                                         river=args.river, opponents=args.opponents[0])

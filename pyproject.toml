@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "holdem_sim"
-version = "0.1.0"
+version = "1.1.0"
 description = "Get probablilites, odds, and win expectations for holdem hands"
 authors = ["Jay Cohen"]
 license = "MIT"
